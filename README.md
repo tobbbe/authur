@@ -17,7 +17,7 @@ import auth from 'tauth';
 // import auth from './path/to/tauth'; if you just downloaded the file
 
 auth.initialize({
-	domain: 'https://your-website.s1.umbraco.io'
+	domain: 'https://your-website.s1.umbraco.io',
 	authPath: '/oauth/token',
 	apiPath: '/umbraco/api', // if you want to use auth.get() helper
 	persistenceGet: key => localStorage.getItem(key),
