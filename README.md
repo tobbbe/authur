@@ -32,8 +32,6 @@ auth.initialize({
 
 ## Login
 ```javascript
-import auth from "tauth";
-
 const attempt = await auth.authenticate({ username, password });
 ```
 
@@ -47,8 +45,6 @@ const unsubscribeFn = auth.onAuthStateChange(status => console.log('auth status 
 
 ## Signout
 ```javascript
-import auth from "tauth";
-
 auth.signout(); // will trigger onAuthStateChange subscriptions
 ```
 
@@ -57,8 +53,6 @@ Requires apiPath to be set in `auth.initialize`.
 Will append valid token to request. Will call signout if token is invalid or 401 is returned from server.
 
 ```javascript
-import auth from "tauth";
-
 const token = auth.get('/news/list')
 ```
 
@@ -66,9 +60,15 @@ const token = auth.get('/news/list')
 Will refresh automagiclly and queue incoming getToken()'s while refreshing.
 
 ```javascript
-import auth from "tauth";
-
 const token = auth.getToken()
+```
+
+
+
+## Check if user is authenticated
+
+```javascript
+const isAuthenticated = await auth.isAuthenticated()
 ```
 
 # React example
