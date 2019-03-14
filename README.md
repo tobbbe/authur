@@ -38,7 +38,7 @@ const attempt = await auth.authenticate({ username, password });
 ```
 
 ## Subscribe to events
-You can also subscribe to auth state changes in other places:
+You can subscribe to auth state changes anywhere:
 
 ```javascript
 const unsubscribeFn = auth.onAuthStateChange(status => console.log('auth status changed to:', status));
