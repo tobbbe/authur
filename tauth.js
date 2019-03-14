@@ -90,7 +90,7 @@ function onAuthStateChange(callback) {
 	const id = _onAuthStateChangeCallbackIds++;
 	_onAuthStateChangeCallbacks.push({ callback, id })
 
-	callback(currentAuthData && currentAuthData.access_token)
+	callback((!!currentAuthData && currentAuthData.access_token))
 
 	// unsubscribe callback
 	return () => {
@@ -140,7 +140,7 @@ async function getToken() {
 
 	await _refreshToken()
 
-	return currentAuthData && currentAuthData.access_token;
+	return (!!;
 }
 
 async function _refreshToken() {
