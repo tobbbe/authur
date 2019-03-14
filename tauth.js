@@ -90,7 +90,7 @@ function onAuthStateChange(callback) {
 	const id = _onAuthStateChangeCallbackIds++;
 	_onAuthStateChangeCallbacks.push({ callback, id })
 
-	callback(!!(currentAuthData && currentAuthData.access_token))
+	callback(isAuthenticated())
 
 	// unsubscribe callback
 	return () => {
@@ -140,7 +140,7 @@ async function getToken() {
 
 	await _refreshToken()
 
-	return (!!;
+	return currentAuthData && currentAuthData.access_token;
 }
 
 async function _refreshToken() {
@@ -178,13 +178,17 @@ async function _refreshToken() {
 	}
 }
 
+function isAuthenticated() {
+	return !!(currentAuthData && currentAuthData.access_token);
+}
+
 const auth = {
 	initialize,
 	authenticate,
 	signout,
 	getToken,
 	onAuthStateChange,
-	isAuthenticated: getToken,
+	isAuthenticated,
 	get,
 	cachedGet
 }
