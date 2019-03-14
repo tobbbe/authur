@@ -90,7 +90,7 @@ function onAuthStateChange(callback) {
 	const id = _onAuthStateChangeCallbackIds++;
 	_onAuthStateChangeCallbacks.push({ callback, id })
 
-	callback((!!currentAuthData && currentAuthData.access_token))
+	callback(!!(currentAuthData && currentAuthData.access_token))
 
 	// unsubscribe callback
 	return () => {
