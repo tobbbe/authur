@@ -12,7 +12,7 @@ Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by se
 or just download and include tauth.js
 
 ## Configuration
-```
+```javascript
 import auth from 'tauth';
 // import auth from './path/to/tauth'; if you just downloaded the file
 
@@ -31,7 +31,7 @@ auth.initialize({
 ```
 
 ## Login
-```
+```javascript
 import auth from "tauth";
 
 const attempt = await auth.authenticate({ username, password });
@@ -40,13 +40,13 @@ const attempt = await auth.authenticate({ username, password });
 ## Subscribe to events
 You can also subscribe to auth state changes in other places:
 
-```
+```javascript
 const unsubscribeFn = auth.onAuthStateChange(status => console.log('auth status changed to:', status));
 
 ```
 
 ## Signout
-```
+```javascript
 import auth from "tauth";
 
 auth.signout(); // will trigger onAuthStateChange subscriptions
@@ -56,7 +56,7 @@ auth.signout(); // will trigger onAuthStateChange subscriptions
 Requires apiPath to be set in `auth.initialize`.
 Will append valid token to request. Will call signout if token is invalid or 401 is returned from server.
 
-```
+```javascript
 import auth from "tauth";
 
 const token = auth.get('/news/list')
@@ -65,7 +65,7 @@ const token = auth.get('/news/list')
 ## Get token
 Will refresh automagiclly and queue incoming getToken()'s while refreshing.
 
-```
+```javascript
 import auth from "tauth";
 
 const token = auth.getToken()
@@ -74,7 +74,7 @@ const token = auth.getToken()
 # React example
 Can also be used with redux (dispatch action on onAuthStateChange)!
 
-```
+```javascript
 import React, { useState, useEffect } from 'react';
 import auth from 'tauth';
 
