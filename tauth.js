@@ -12,7 +12,7 @@ let getTokenQueue = [];
 
 async function initialize({ domain, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
-		console.error('Auth service already initialized!')
+		log('Auth service already initialized!')
 		return;
 	}
 
