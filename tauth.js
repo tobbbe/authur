@@ -29,7 +29,7 @@ async function initialize({ domain, authPath, apiPath, persistenceGet, persisten
 		}
 	}
 
-	const authDataRaw = persistenceGet(authDataStorageKey);
+	const authDataRaw = await persistenceGet(authDataStorageKey);
 	let success = false;
 
 	try {
