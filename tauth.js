@@ -10,7 +10,7 @@ let _onAuthStateChangeCallbackIds = 0;
 let getTokenQueue = [];
 
 
-async function initialize({ domain, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
+async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
 		log('Auth service already initialized!')
 		return;
@@ -19,7 +19,7 @@ async function initialize({ domain, authPath, apiPath, persistenceGet, persisten
 	isInitalized = true;
 	isProcessing = true;
 
-	config = { domain, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
+	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
 
 	log('TokenService init start')
 
@@ -55,7 +55,7 @@ async function initialize({ domain, authPath, apiPath, persistenceGet, persisten
 }
 
 async function authenticate({ username, password }) {
-	const resp = await fetch(config.domain + config.authPath, {
+	const resp = await fetch(config.origin + config.authPath, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -148,7 +148,7 @@ async function _refreshToken() {
 		isProcessing = true;
 		log('refreshing token')
 
-		const resp = await fetch(config.domain + config.authPath, {
+		const resp = await fetch(config.origin + config.authPath, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -205,7 +205,7 @@ async function get(path) {
 		const token = await getToken()
 		if (!token) return { ok: false, error: 'token is undefined: ' + token };
 
-		const resp = await fetch(config.domain + config.apiPath + path, {
+		const resp = await fetch(config.origin + config.apiPath + path, {
 			method: 'GET',
 			headers: {
 				Accept: 'application/json',
