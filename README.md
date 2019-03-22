@@ -57,7 +57,7 @@ Will append valid token to request. Will call signout if token is invalid or 401
 
 ```javascript
 const resp = await auth.get('/news/list');
-const content = resp.json(); // this is a normal fetch response
+const content = await resp.json(); // this is a normal fetch response
 ```
 
 ## Get token
