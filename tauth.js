@@ -203,7 +203,7 @@ export default auth;
 async function get(path) {
 	try {
 		const token = await getToken()
-		if (!token) return { ok: false, error: 'token is undefined: ' + token };
+		if (!token) return createFetchErrorResponse('token is undefined: ' + token);
 
 		const resp = await fetch(config.origin + config.apiPath + path, {
 			method: 'GET',
@@ -215,30 +215,19 @@ async function get(path) {
 		})
 
 		if (resp.status === 401) {
-			console.log('Recieved 401 from API call', resp, token)
-			await signout()
+			// return resp first so that that the user can handle the response before all events are called
+			setTimeout(() => {
+				log('Recieved 401 from API call', resp, token)
+				signout()
+			}, 1);
 		}
-		else {
-			const contentType = resp.headers && resp.headers.get("content-type");
 
-			if (contentType && contentType.indexOf("application/json") !== -1) {
-				const data = await resp.json();
-				return { ok: true, data };
-			}
-			else if (contentType && contentType.indexOf("text/plain") !== -1) {
-				const data = await resp.text();
-				return { ok: true, data };
-			}
-			else {
-				console.log('response couldnt be parsed', resp)
-			}
-		}
+		return resp;
 
 	} catch (error) {
-		console.log(error)
+		log(error)
+		return createFetchErrorResponse(error);
 	}
-
-	return { ok: false };
 }
 
 const cache = {};
@@ -250,18 +239,35 @@ async function cachedGet(path, refresh = false) {
 		};
 	}
 
-	const resp = await get(path);
+	const resp = await _parseResponse(get(path));
 
 	if (resp.ok) {
-		cache[path] = resp.data;
+		cache[path] = resp;
 	}
 
 	return resp;
 }
 
+async function _parseResponse(resp) {
+	const contentType = resp.headers && resp.headers.get("content-type");
 
+	if (contentType && contentType.indexOf("application/json") !== -1) {
+		const data = await resp.json();
+		return { ok: true, data };
+	}
+	else if (contentType && contentType.indexOf("text/plain") !== -1) {
+		const data = await resp.text();
+		return { ok: true, data };
+	}
+	else {
+		log('response couldnt be parsed', resp)
+		return createFetchErrorResponse('response couldnt be parsed');
+	}
+}
 
-
+function createFetchErrorResponse(errorMsg) {
+	return { ok: false, error: errorMsg };
+}
 
 // HELPERS //
 

@@ -5,6 +5,7 @@ Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by se
 ## Requirements
 - ES6
 - async/await
+- fetch
 
 ## Installation
 `npm install tobbbe/tauth` (not avalible on npm)
@@ -39,8 +40,10 @@ const attempt = await auth.authenticate({ username, password });
 You can subscribe to auth state changes anywhere:
 
 ```javascript
-const unsubscribeFn = auth.onAuthStateChange(status => console.log('auth status changed to:', status));
+const unsubscribe = auth.onAuthStateChange(status => console.log('auth status changed to:', status));
 
+// later
+unsubscribe();
 ```
 
 ## Signout
@@ -53,14 +56,15 @@ Requires apiPath to be set in `auth.initialize`.
 Will append valid token to request. Will call signout if token is invalid or 401 is returned from server.
 
 ```javascript
-const token = auth.get('/news/list')
+const resp = await auth.get('/news/list');
+const content = resp.json(); // this is a normal fetch response
 ```
 
 ## Get token
 Will refresh automagiclly and queue incoming getToken()'s while refreshing.
 
 ```javascript
-const token = auth.getToken()
+const token = await auth.getToken()
 ```
 
 
