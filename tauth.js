@@ -12,7 +12,7 @@ let getTokenQueue = [];
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
-		log('Auth service already initialized!')
+		log('tauth: already initialized!')
 		return;
 	}
 
@@ -21,7 +21,7 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
 
-	log('TokenService init start')
+	log('tauth: init start')
 
 	if (events) {
 		if (events.onAuthStateChange && events.onAuthStateChange instanceof Function) {
@@ -36,18 +36,18 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 		const persistedAuthData = JSON.parse(authDataRaw);
 
 		if (persistedAuthData && persistedAuthData.refresh_token) {
-			log('token init completed successfully')
+			log('tauth: init completed successfully')
 			currentAuthData = persistedAuthData;
 			success = true;
 			_authStateChange(success)
 		}
 		else {
-			log('token init completed but token invalid. Signing out! oauth from storage was:', persistedAuthData)
+			log('tauth: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
 			signout()
 		}
 	}
 	catch (error) {
-		log('error getting or parsing token. Signing out! oauth from storage was:', authDataRaw, error)
+		log('tauth: error getting or parsing token. Signing out! data from storage was:', authDataRaw, error)
 		signout()
 	}
 
@@ -78,7 +78,7 @@ async function authenticate({ username, password }) {
 		};
 	}
 	else {
-		log("FAILED LOGIN ATTEMPT", resp)
+		log("tauth: failed login attempt")
 		return {
 			ok: false,
 			error: resp.status === 401 ? 'Wrong username or password' : 'Something went wrong'
@@ -110,7 +110,7 @@ function signout() {
 }
 
 function _authStateChange(status) {
-	log("AUTH STATE CHANGE " + status)
+	log("tauth: auth state change " + status)
 	_onAuthStateChangeCallbacks.forEach(c => {
 		c.callback(status)
 	})
@@ -118,7 +118,7 @@ function _authStateChange(status) {
 
 async function _setAuthData(_newAuthData) {
 	if (_newAuthData === null || typeof _newAuthData !== 'object') {
-		log('auth data is invalid')
+		log('tauth: data is invalid')
 		signout()
 	}
 	else {
@@ -134,7 +134,7 @@ function _completeProcessing() {
 	isProcessing = false;
 
 	for (const key in getTokenQueue) {
-		log('processing token req queue item')
+		log('tauth: processing getToken queue item')
 		getTokenQueue[key].resolve(getToken())
 	}
 
@@ -158,7 +158,7 @@ async function getToken() {
 async function _refreshToken() {
 	if (currentAuthData && Date.now() > (currentAuthData.expires_at - 10000)) {
 		isProcessing = true;
-		log('refreshing token')
+		log('tauth: refreshing token')
 
 		const resp = await fetch(config.origin + config.authPath, {
 			method: 'POST',
@@ -175,14 +175,14 @@ async function _refreshToken() {
 
 		if (resp.ok) {
 			await _setAuthData(respData)
-			log('token has been refreshed')
+			log('tauth: token has been refreshed')
 		}
 		else if (resp.status === 401) {
-			log("refresh_token invalid", currentAuthData, respData)
+			log("tauth: server returned 401 when trying to refresh token", currentAuthData, respData)
 			signout()
 		}
 		else {
-			log('server error from refresh_token', resp, respData)
+			log('tauth: server returned an error when trying to refresh token', resp, respData)
 		}
 
 		_completeProcessing()
@@ -226,7 +226,7 @@ async function _fetch(path, options) {
 	const resp = await fetch(config.origin + config.apiPath + path, options)
 
 	if (resp.status === 401) {
-		log(`Recieved 401 from API call. ${!token ? 'Token was null.' : ''}`)
+		log(`tauth: recieved 401 from API call. ${!token ? 'Token was null.' : ''}`)
 		signout()
 	}
 
