@@ -74,6 +74,6 @@ const token = await auth.getToken()
 const isAuthenticated = await auth.isAuthenticated()
 ```
 
-# React example
+# Examples
 [react-hooks](https://github.com/tobbbe/tauth/blob/master/examples/react-hooks.js)<br/>
 [react-redux](https://github.com/tobbbe/tauth/blob/master/examples/react-redux.js)<br/>
