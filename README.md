@@ -51,12 +51,12 @@ unsubscribe();
 auth.signout(); // will trigger onAuthStateChange subscriptions
 ```
 
-## Fetch helper (api GET)
+## Fetch helper
 Requires apiPath to be set in `auth.initialize`.
 Will append valid token to request. Will call signout if token is invalid or 401 is returned from server.
 
 ```javascript
-const resp = await auth.get('/news/list');
+const resp = await auth.fetch('/news/list'); // you can pass custom options as second param
 const content = await resp.json(); // this is a normal fetch response
 ```
 

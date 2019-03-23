@@ -208,71 +208,31 @@ export default auth;
 
 
 
+// helpers
 
-// FETCH HELPERS //
-
-async function get(path) {
+async function fetch(path, options) {
 	const token = await getToken();
 
-	if (!token) {
-		log("token is null");
+	options = options || {};
+	options.method = options.method || 'GET';
+	options.headers = options.headers || {
+		Accept: 'application/json',
+		'Content-Type': 'application/json'
 	}
 
-	const resp = await fetch(config.origin + config.apiPath + path, {
-		method: 'GET',
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`
-		}
-	})
+	if (!options.headers.Authorization) {
+		options.headers.Authorization = `Bearer ${token}`;
+	}
+
+	const resp = await fetch(config.origin + config.apiPath + path, options)
 
 	if (resp.status === 401) {
-		log('Recieved 401 from API call', resp, token)
+		log(`Recieved 401 from API call. ${!token ? 'Token was null.' : ''}`)
 		signout()
 	}
 
 	return resp;
 }
-
-const cache = {};
-async function cachedGet(path, refresh = false) {
-
-	if (!refresh && cache[path]) {
-		return cache[path];
-	}
-
-	const resp = await get(path);
-
-	if (resp.ok) {
-		cache[path] = resp;
-	}
-
-	return resp;
-}
-
-async function _parseResponse(resp) {
-	const contentType = resp.headers && resp.headers.get("content-type");
-
-	if (contentType && contentType.indexOf("application/json") !== -1) {
-		const data = await resp.json();
-		return { ok: true, data };
-	}
-	else if (contentType && contentType.indexOf("text/plain") !== -1) {
-		const data = await resp.text();
-		return { ok: true, data };
-	}
-	else {
-		log('response couldnt be parsed', resp)
-		return createFetchErrorResponse('response couldnt be parsed');
-	}
-}
-
-function createFetchErrorResponse(errorMsg) {
-	return { ok: false, error: errorMsg };
-}
-
-// HELPERS //
 
 function objectToFormData(obj) {
 	return Object.keys(obj)
