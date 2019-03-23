@@ -126,7 +126,6 @@ async function _setAuthData(_newAuthData) {
 		_newAuthData.expires_at = Date.now() + _newAuthData.expires_in * 1000;
 		currentAuthData = _newAuthData;
 		await config.persistenceSet(authDataStorageKey, JSON.stringify(_newAuthData))
-		_completeProcessing()
 	}
 }
 
