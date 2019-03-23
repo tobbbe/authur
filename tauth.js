@@ -70,7 +70,7 @@ async function authenticate({ username, password }) {
 
 	if (resp.ok) {
 		const respData = await resp.json();
-		_setAuthData(respData);
+		await _setAuthData(respData);
 		_authStateChange(true)
 
 		return {
@@ -99,11 +99,14 @@ function onAuthStateChange(callback) {
 }
 
 function signout() {
-	currentAuthData = null;
-	config.persistenceClear()
-	isProcessing = false;
+	// put it at the end of the event loop
+	setTimeout(async () => {
+		currentAuthData = null;
+		await config.persistenceClear()
+		isProcessing = false;
 
-	_authStateChange(false)
+		_authStateChange(false)
+	})
 }
 
 function _authStateChange(status) {
@@ -114,23 +117,28 @@ function _authStateChange(status) {
 }
 
 async function _setAuthData(_newAuthData) {
-	if (_newAuthData === null || typeof _newAuthData !== 'object') throw new Error('authData must be an object');
-
-	isProcessing = true;
-	_newAuthData.expires_at = Date.now() + _newAuthData.expires_in * 1000;
-	currentAuthData = _newAuthData;
-	await config.persistenceSet(authDataStorageKey, JSON.stringify(_newAuthData))
-	_completeProcessing()
+	if (_newAuthData === null || typeof _newAuthData !== 'object') {
+		log('auth data is invalid')
+		signout()
+	}
+	else {
+		isProcessing = true;
+		_newAuthData.expires_at = Date.now() + _newAuthData.expires_in * 1000;
+		currentAuthData = _newAuthData;
+		await config.persistenceSet(authDataStorageKey, JSON.stringify(_newAuthData))
+		_completeProcessing()
+	}
 }
 
 function _completeProcessing() {
 	isProcessing = false;
 
-	while (getTokenQueue.length) {
+	for (const key in getTokenQueue) {
 		log('processing token req queue item')
-		const item = getTokenQueue.shift();
-		item.resolve(getToken())
+		getTokenQueue[key].resolve(getToken())
 	}
+
+	getTokenQueue = [];
 }
 
 async function getToken() {
@@ -140,7 +148,11 @@ async function getToken() {
 
 	await _refreshToken()
 
-	return currentAuthData && currentAuthData.access_token;
+	if (currentAuthData) {
+		return currentAuthData.access_token;
+	}
+
+	return null;
 }
 
 async function _refreshToken() {
@@ -166,8 +178,7 @@ async function _refreshToken() {
 			log('token has been refreshed')
 		}
 		else if (resp.status === 401) {
-			console.warn("ERROR: refresh_token not valid", currentAuthData)
-			log(respData)
+			log("refresh_token invalid", currentAuthData, respData)
 			signout()
 		}
 		else {
@@ -201,33 +212,27 @@ export default auth;
 // FETCH HELPERS //
 
 async function get(path) {
-	try {
-		const token = await getToken()
-		if (!token) return createFetchErrorResponse('token is undefined: ' + token);
+	const token = await getToken();
 
-		const resp = await fetch(config.origin + config.apiPath + path, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`
-			}
-		})
-
-		if (resp.status === 401) {
-			// return resp first so that that the user can handle the response before all events are called
-			setTimeout(() => {
-				log('Recieved 401 from API call', resp, token)
-				signout()
-			}, 1);
-		}
-
-		return resp;
-
-	} catch (error) {
-		log(error)
-		return createFetchErrorResponse(error);
+	if (!token) {
+		log("token is null");
 	}
+
+	const resp = await fetch(config.origin + config.apiPath + path, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
+		}
+	})
+
+	if (resp.status === 401) {
+		log('Recieved 401 from API call', resp, token)
+		signout()
+	}
+
+	return resp;
 }
 
 const cache = {};
