@@ -200,7 +200,7 @@ const auth = {
 	getToken,
 	onAuthStateChange,
 	isAuthenticated,
-	fetch
+	fetch: _fetch
 }
 
 export default auth;
@@ -209,7 +209,7 @@ export default auth;
 
 // helpers
 
-async function fetch(path, options) {
+async function _fetch(path, options) {
 	const token = await getToken();
 
 	options = options || {};
