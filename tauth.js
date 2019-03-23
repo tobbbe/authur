@@ -200,7 +200,7 @@ const auth = {
 	getToken,
 	onAuthStateChange,
 	isAuthenticated,
-	get,
+	fetch,
 	cachedGet
 }
 

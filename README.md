@@ -20,7 +20,7 @@ import auth from 'tauth';
 auth.initialize({
 	origin: 'https://your-website.s1.umbraco.io',
 	authPath: '/oauth/token',
-	apiPath: '/umbraco/api', // if you want to use auth.get() helper
+	apiPath: '/umbraco/api',
 	persistenceGet: key => localStorage.getItem(key),
 	persistenceSet: (key, val) => localStorage.setItem(key, val),
 	persistenceClear: () => localStorage.clear(),
@@ -52,12 +52,14 @@ auth.signout(); // will trigger onAuthStateChange subscriptions
 ```
 
 ## Fetch helper
-Requires apiPath to be set in `auth.initialize`.
-Will append valid token to request. Will call signout if token is invalid or 401 is returned from server.
+Will append api path if it is set in `auth.initialize`.
+Will append valid token to request and call signout() if 401 is returned from server.
+Works just like a normal fetch (you can pass options as second params as usual).
+Defaults to 'GET' if no options are passed.
 
 ```javascript
-const resp = await auth.fetch('/news/list'); // you can pass custom options as second param
-const content = await resp.json(); // this is a normal fetch response
+const resp = await auth.fetch('/news/list');
+const content = await resp.json();
 ```
 
 ## Get token
