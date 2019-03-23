@@ -237,14 +237,12 @@ async function get(path) {
 
 const cache = {};
 async function cachedGet(path, refresh = false) {
+
 	if (!refresh && cache[path]) {
-		return {
-			data: cache[path],
-			ok: true
-		};
+		return cache[path];
 	}
 
-	const resp = await _parseResponse(get(path));
+	const resp = await get(path);
 
 	if (resp.ok) {
 		cache[path] = resp;
