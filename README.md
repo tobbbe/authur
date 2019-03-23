@@ -33,7 +33,7 @@ auth.initialize({
 
 ## Login
 ```javascript
-const attempt = await auth.authenticate({ username, password }); // { ok: true/false, error: 'error message if any' }
+const { ok, error } = await auth.authenticate({ username, password });
 ```
 
 ## Subscribe to events
