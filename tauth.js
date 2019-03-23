@@ -110,7 +110,7 @@ function signout() {
 }
 
 function _authStateChange(status) {
-	log("tauth: auth state change " + status)
+	log("tauth: auth state changed to " + status)
 	_onAuthStateChangeCallbacks.forEach(c => {
 		c.callback(status)
 	})
