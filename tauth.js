@@ -156,7 +156,8 @@ async function getToken() {
 }
 
 async function _refreshToken() {
-	if (currentAuthData && Date.now() > (currentAuthData.expires_at - 10000)) {
+	// get a new token 3 seconds before the old one expires
+	if (currentAuthData && Date.now() > (currentAuthData.expires_at - 3000)) {
 		isProcessing = true;
 		log('tauth: refreshing token')
 
