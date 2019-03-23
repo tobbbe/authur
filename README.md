@@ -52,8 +52,7 @@ auth.signout(); // will trigger onAuthStateChange subscriptions
 ```
 
 ## Fetch helper
-Will append api path if it is set in `auth.initialize`.
-Will append valid token to request and call signout() if 401 is returned from server.
+Will append valid token to request and call signout() if 401 is returned from server. Also appends api path if it is set in `auth.initialize`.
 Works just like a normal fetch (you can pass options as second params as usual).
 Defaults to 'GET' if no options are passed.
 
