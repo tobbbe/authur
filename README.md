@@ -77,4 +77,4 @@ const isAuthenticated = await auth.isAuthenticated()
 # React example
 Can also be used with redux (dispatch action on onAuthStateChange)!
 
-(react-hooks)[https://github.com/tobbbe/tauth/blob/master/examples/react-hooks.js]<br/>
+[react-hooks](https://github.com/tobbbe/tauth/blob/master/examples/react-hooks.js)<br/>
