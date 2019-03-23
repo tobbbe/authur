@@ -53,8 +53,8 @@ auth.signout(); // will trigger onAuthStateChange subscriptions
 ## Fetch helper
 Works just like a normal fetch (you can pass options as second params as usual).
 
-- Append valid token to request and call signout() if 401 is returned from server
-- Defaults to 'GET' if no options are passed.
+- Appends a valid token to request and call signout() if 401 is returned from server
+- Defaults to 'GET' if no options are passed
 - Appends api path if it is set in `auth.initialize`
 
 ```javascript
@@ -75,6 +75,5 @@ const isAuthenticated = await auth.isAuthenticated()
 ```
 
 # React example
-Can also be used with redux (dispatch action on onAuthStateChange)!
-
 [react-hooks](https://github.com/tobbbe/tauth/blob/master/examples/react-hooks.js)<br/>
+[react-redux](https://github.com/tobbbe/tauth/blob/master/examples/react-redux.js)<br/>
