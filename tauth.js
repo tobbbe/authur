@@ -200,8 +200,7 @@ const auth = {
 	getToken,
 	onAuthStateChange,
 	isAuthenticated,
-	fetch,
-	cachedGet
+	fetch
 }
 
 export default auth;
