@@ -238,5 +238,3 @@ function objectToFormData(obj) {
 	return Object.keys(obj)
 		.map(key => encodeURIComponent(key) + '=' + encodeURIComponent(obj[key])).join('&')
 }
-
-const log = (!config || config.debug) ? console.log.bind(window.console) : () => { };
