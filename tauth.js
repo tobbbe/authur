@@ -201,7 +201,8 @@ const auth = {
 	getToken,
 	onAuthStateChange,
 	isAuthenticated,
-	fetch: _fetch
+	fetch: _fetch,
+	fetchPost: (url, data) => _fetch(url, { method: 'POST', body: JSON.stringify(data) })
 }
 
 export default auth;
