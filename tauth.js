@@ -1,7 +1,7 @@
 // install locally with `npm install ./../shared/tauth/`
 
 const authDataStorageKey = 'tauthData';
-let config;
+let config, log;
 let isInitalized = false;
 let isProcessing = false;
 let currentAuthData;
@@ -12,7 +12,7 @@ let getTokenQueue = [];
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
-		log('tauth: already initialized!')
+		console.log('tauth: already initialized!')
 		return;
 	}
 
@@ -20,6 +20,7 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	isProcessing = true;
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
+	log = config.debug ? console.log.bind(window.console) : () => { };
 
 	log('tauth: init start')
 
