@@ -1,6 +1,6 @@
 {
 	"name": "authur",
-	"version": "0.2.10",
+	"version": "0.2.11",
 	"description": "Supersimple oauth2 helper. Works well with umbraco-authu. Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by setting persistenceGet, persistenceSet and persistenceClear",
 	"main": "authur.js",
 	"scripts": {
