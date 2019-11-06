@@ -7,9 +7,9 @@ Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by se
 - fetch
 
 ## Installation
-`npm install tobbbe/tauth` (not avalible on npm)
+`npm install authur`
 
-or just download and include tauth.js
+or just download and include authur.js
 
 ## Configuration
 ```javascript
@@ -75,5 +75,5 @@ const isAuthenticated = await auth.isAuthenticated()
 ```
 
 # Examples
-[react-hooks](https://github.com/tobbbe/tauth/blob/master/examples/react-hooks.js)<br/>
-[react-redux](https://github.com/tobbbe/tauth/blob/master/examples/react-redux.js)<br/>
+[react-hooks](https://github.com/tobbbe/authur/blob/master/examples/react-hooks.js)<br/>
+[react-redux](https://github.com/tobbbe/authur/blob/master/examples/react-redux.js)<br/>

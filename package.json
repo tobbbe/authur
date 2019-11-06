@@ -9,7 +9,7 @@
 	"author": "Tobias Ekman",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tobbbe/tauth"
+		"url": "https://github.com/tobbbe/authur"
 	},
 	"files": [
 		"authur.js"
