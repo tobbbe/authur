@@ -1,6 +1,6 @@
-// install locally with `npm install ./../shared/tauth/`
+// install locally with `npm install ./../shared/authur/`
 
-const authDataStorageKey = 'tauthData';
+const authDataStorageKey = 'authurData';
 let config, log;
 let isInitalized = false;
 let isProcessing = false;
@@ -12,7 +12,7 @@ let getTokenQueue = [];
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
-		console.log('tauth: already initialized!')
+		console.log('authur: already initialized!')
 		return;
 	}
 
@@ -22,7 +22,7 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
 	log = config.debug ? console.log.bind(window.console) : () => { };
 
-	log('tauth: init start')
+	log('authur: init start')
 
 	if (events) {
 		if (events.onAuthStateChange && events.onAuthStateChange instanceof Function) {
@@ -39,11 +39,11 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 		if (persistedAuthData && persistedAuthData.refresh_token) {
 
 			if (Date.now() > persistedAuthData.expires_at && persistedAuthData.expires_at) {
-				log('tauth: init completed but token has expired:', persistedAuthData)
+				log('authur: init completed but token has expired:', persistedAuthData)
 				signout()
 			}
 			else {
-				log('tauth: init completed successfully')
+				log('authur: init completed successfully')
 				currentAuthData = persistedAuthData;
 				success = true;
 				_authStateChange(success)
@@ -51,12 +51,12 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 
 		}
 		else {
-			log('tauth: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
+			log('authur: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
 			signout()
 		}
 	}
 	catch (error) {
-		log('tauth: error getting or parsing token. Signing out! data from storage was:', authDataRaw, error)
+		log('authur: error getting or parsing token. Signing out! data from storage was:', authDataRaw, error)
 		signout()
 	}
 
@@ -87,7 +87,7 @@ async function authenticate({ username, password }) {
 		};
 	}
 	else {
-		log("tauth: failed login attempt")
+		log("authur: failed login attempt")
 		return {
 			ok: false,
 			error: resp.status === 401 ? 'Wrong username or password' : 'Something went wrong'
@@ -119,7 +119,7 @@ function signout() {
 }
 
 function _authStateChange(status) {
-	log("tauth: auth state changed to: " + status)
+	log("authur: auth state changed to: " + status)
 	_onAuthStateChangeCallbacks.forEach(c => {
 		c.callback(status)
 	})
@@ -127,7 +127,7 @@ function _authStateChange(status) {
 
 async function _setAuthData(_newAuthData) {
 	if (_newAuthData === null || typeof _newAuthData !== 'object') {
-		log('tauth: data is invalid')
+		log('authur: data is invalid')
 		signout()
 	}
 	else {
@@ -141,7 +141,7 @@ function _completeProcessing() {
 	isProcessing = false;
 
 	for (const key in getTokenQueue) {
-		log('tauth: processing getToken queue item')
+		log('authur: processing getToken queue item')
 		getTokenQueue[key].resolve(getToken())
 	}
 
@@ -166,7 +166,7 @@ async function _refreshToken() {
 	// get a new token 3 seconds before the old one expires
 	if (currentAuthData && Date.now() > (currentAuthData.expires_at - 3000)) {
 		isProcessing = true;
-		log('tauth: refreshing token')
+		log('authur: refreshing token')
 
 		const resp = await fetch(config.origin + config.authPath, {
 			method: 'POST',
@@ -183,14 +183,14 @@ async function _refreshToken() {
 
 		if (resp.ok) {
 			await _setAuthData(respData)
-			log('tauth: token has been refreshed')
+			log('authur: token has been refreshed')
 		}
 		else if (resp.status === 401) {
-			log("tauth: server returned 401 when trying to refresh token", currentAuthData, respData)
+			log("authur: server returned 401 when trying to refresh token", currentAuthData, respData)
 			signout()
 		}
 		else {
-			log('tauth: server returned an error when trying to refresh token', resp, respData)
+			log('authur: server returned an error when trying to refresh token', resp, respData)
 		}
 
 		_completeProcessing()
@@ -235,7 +235,7 @@ async function _fetch(path, options) {
 	const resp = await fetch(config.origin + config.apiPath + path, options)
 
 	if (resp.status === 401) {
-		log(`tauth: recieved 401 from API call. ${!token ? 'Token was null.' : ''}`)
+		log(`authur: recieved 401 from API call. ${!token ? 'Token was null.' : ''}`)
 		signout()
 	}
 

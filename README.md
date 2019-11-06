@@ -13,8 +13,8 @@ or just download and include tauth.js
 
 ## Configuration
 ```javascript
-import auth from 'tauth';
-// import auth from './path/to/tauth'; if you just downloaded the file
+import auth from 'authur';
+// import auth from './path/to/authur'; if you just downloaded the file
 
 auth.initialize({
 	origin: 'https://your-website.s1.umbraco.io',

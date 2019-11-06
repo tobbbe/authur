@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import auth from 'tauth';
+import auth from 'authur';
 
 
 export default function App() {
