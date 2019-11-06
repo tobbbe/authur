@@ -37,10 +37,18 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 		const persistedAuthData = JSON.parse(authDataRaw);
 
 		if (persistedAuthData && persistedAuthData.refresh_token) {
-			log('tauth: init completed successfully')
-			currentAuthData = persistedAuthData;
-			success = true;
-			_authStateChange(success)
+
+			if (Date.now() > persistedAuthData.expires_at && persistedAuthData.expires_at) {
+				log('tauth: init completed but token has expired:', persistedAuthData)
+				signout()
+			}
+			else {
+				log('tauth: init completed successfully')
+				currentAuthData = persistedAuthData;
+				success = true;
+				_authStateChange(success)
+			}
+
 		}
 		else {
 			log('tauth: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
