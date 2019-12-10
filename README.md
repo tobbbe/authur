@@ -9,12 +9,9 @@ Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by se
 ## Installation
 `npm install authur`
 
-or just download and include authur.js
-
 ## Configuration
 ```javascript
 import auth from 'authur';
-// import auth from './path/to/authur'; if you just downloaded the file
 
 auth.initialize({
 	origin: 'https://your-website.s1.umbraco.io',
@@ -47,11 +44,11 @@ unsubscribe();
 
 ## Signout
 ```javascript
-auth.signout(); // will trigger onAuthStateChange subscriptions
+auth.signout();
 ```
 
 ## Fetch helper
-Works just like a normal fetch (you can pass options as second params as usual).
+Just a wrapper around [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) that:
 
 - Appends a valid token to request and call signout() if 401 is returned from server
 - Defaults to 'GET' if no options are passed

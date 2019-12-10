@@ -12,7 +12,7 @@ let getTokenQueue = [];
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
-		console.log('authur: already initialized!')
+		log('authur: already initialized!')
 		return;
 	}
 
@@ -20,7 +20,7 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	isProcessing = true;
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
-	log = config.debug ? console.log.bind(window.console) : () => { };
+	log = config.debug ? log.bind(window.console) : () => { };
 
 	log('authur: init start')
 
