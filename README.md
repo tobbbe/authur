@@ -60,7 +60,7 @@ const content = await resp.json();
 ```
 
 ## Get token
-Will refresh automagiclly and queue incoming getToken()'s while refreshing.
+Returns a valid token if possible. Will automagiclly refresh if needed.
 
 ```javascript
 const token = await auth.getToken()
