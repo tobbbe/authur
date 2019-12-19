@@ -19,7 +19,7 @@ auth.initialize({
 	apiPath: '/umbraco/api',
 	persistenceGet: key => localStorage.getItem(key),
 	persistenceSet: (key, val) => localStorage.setItem(key, val),
-	persistenceClear: () => localStorage.clear(),
+	persistenceClear: (storageKey) => localStorage.removeItem(storageKey),
 	debug: true,
 	events: {
 		onAuthStateChange: status => console.log('auth status changed to:', status))

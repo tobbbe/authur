@@ -14,7 +14,7 @@ export default function App() {
 			apiPath: '/umbraco/api',
 			persistenceGet: key => localStorage.getItem(key),
 			persistenceSet: (key, val) => localStorage.setItem(key, val),
-			persistenceClear: () => localStorage.clear(),
+			persistenceClear: (storageKey) => localStorage.removeItem(storageKey),
 			debug: true,
 			events: {
 				onAuthStateChange: status => setUserIsAuthenticated(status)
