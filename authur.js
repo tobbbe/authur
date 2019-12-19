@@ -16,6 +16,17 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 		return;
 	}
 
+	if (!(persistenceGet && persistenceSet)) {
+		console.warn('authur:', 'persistenceGet or persistenceSet is not set - logins will not persist after page reloads')
+	}
+	if (!persistenceClear) {
+		console.warn('authur:', 'persistenceClear is not set - logout will not work as expected')
+	}
+
+	persistenceGet = persistenceGet || noop;
+	persistenceSet = persistenceSet || noop;
+	persistenceClear = persistenceClear || noop;
+
 	isInitalized = true;
 	isProcessing = true;
 
@@ -103,7 +114,7 @@ function signout() {
 	// put it at the end of the event loop
 	setTimeout(async () => {
 		currentAuthData = null;
-		await config.persistenceClear()
+		await config.persistenceClear(authDataStorageKey)
 		isProcessing = false;
 
 		_authStateChange(false)
@@ -238,3 +249,5 @@ function objectToFormData(obj) {
 	return Object.keys(obj)
 		.map(key => encodeURIComponent(key) + '=' + encodeURIComponent(obj[key])).join('&')
 }
+
+function noop() { }
