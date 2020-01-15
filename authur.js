@@ -1,7 +1,8 @@
 // install locally with `npm install ./../shared/authur/`
 
 const authDataStorageKey = 'authurData';
-let config, log;
+let config;
+let log = noop;
 let isInitalized = false;
 let isProcessing = false;
 let currentAuthData;
@@ -31,7 +32,10 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	isProcessing = true;
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
-	log = config.debug ? log.bind(window.console) : () => { };
+
+	if (config.debug) {
+		log.bind(window.console)
+	}
 
 	log('authur: init start')
 
