@@ -1,15 +1,12 @@
-// install locally with `npm install ./../shared/authur/`
-
 const authDataStorageKey = 'authurData';
 let config;
-let log = noop;
+let log = console.log;
 let isInitalized = false;
 let isProcessing = false;
 let currentAuthData;
 let _onAuthStateChangeCallbacks = [];
 let _onAuthStateChangeCallbackIds = 0;
 let getTokenQueue = [];
-
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
 	if (isInitalized) {
@@ -33,8 +30,8 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
 
-	if (config.debug) {
-		log.bind(window.console)
+	if (!config.debug) {
+		log = () => { };
 	}
 
 	log('authur: init start')
@@ -48,22 +45,21 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	const authDataRaw = await persistenceGet(authDataStorageKey);
 	let success = false;
 
-	try {
-		const persistedAuthData = JSON.parse(authDataRaw);
-
-		if (persistedAuthData && persistedAuthData.refresh_token) {
-			log('authur: init completed successfully')
-			currentAuthData = persistedAuthData;
-			success = true;
-			_authStateChange(success)
-		}
-		else {
-			log('authur: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
-			signout()
-		}
+	if (!authDataRaw) {
+		log('authur: could not find any persisted data')
+		signout()
 	}
-	catch (error) {
-		log('authur: error getting or parsing token. Signing out! data from storage was:', authDataRaw, error)
+
+	const persistedAuthData = JSON.parse(authDataRaw);
+
+	if (persistedAuthData && persistedAuthData.refresh_token) {
+		log('authur: init completed successfully')
+		currentAuthData = persistedAuthData;
+		success = true;
+		_authStateChange(success)
+	}
+	else {
+		log('authur: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
 		signout()
 	}
 
