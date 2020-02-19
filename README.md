@@ -1,4 +1,4 @@
-Supersimple oauth2 helper. Works well with [umbraco-authu](https://github.com/mattbrailsford/umbraco-authu).
+Super simple oauth2 helper. Works well with [umbraco-authu](https://github.com/mattbrailsford/umbraco-authu).
 Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by setting `persistenceGet`, `persistenceSet` and `persistenceClear`.
 
 ## Requirements

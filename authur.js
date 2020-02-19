@@ -1,7 +1,6 @@
 const authDataStorageKey = 'authurData';
 let config;
 let log = console.log;
-let isInitalized = false;
 let isProcessing = false;
 let currentAuthData;
 let _onAuthStateChangeCallbacks = [];
@@ -9,10 +8,6 @@ let _onAuthStateChangeCallbackIds = 0;
 let getTokenQueue = [];
 
 async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
-	if (isInitalized) {
-		log('authur: already initialized!')
-		return;
-	}
 
 	if (!(persistenceGet && persistenceSet)) {
 		console.warn('authur:', 'persistenceGet or persistenceSet is not set - logins will not persist after page reloads')
@@ -25,7 +20,6 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	persistenceSet = persistenceSet || noop;
 	persistenceClear = persistenceClear || noop;
 
-	isInitalized = true;
 	isProcessing = true;
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
@@ -34,32 +28,32 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 		log = () => { };
 	}
 
-	log('authur: init start')
+	log('authur: init') // , `callbacks: ${_onAuthStateChangeCallbacks.length}`
 
 	if (events) {
 		if (events.onAuthStateChange && events.onAuthStateChange instanceof Function) {
-			onAuthStateChange(events.onAuthStateChange)
+			_onAuthStateChangeCallbacks = _onAuthStateChangeCallbacks.filter(x => x.id !== 'init-callback-onAuthStateChange')
+			_onAuthStateChangeCallbacks.push({ callback: events.onAuthStateChange, id: 'init-callback-onAuthStateChange' })
 		}
 	}
 
 	const authDataRaw = await persistenceGet(authDataStorageKey);
-	let success = false;
 
-	if (!authDataRaw) {
-		log('authur: could not find any persisted data')
-		signout()
-	}
+	if (authDataRaw) {
+		const persistedAuthData = JSON.parse(authDataRaw);
 
-	const persistedAuthData = JSON.parse(authDataRaw);
-
-	if (persistedAuthData && persistedAuthData.refresh_token) {
-		log('authur: init completed successfully')
-		currentAuthData = persistedAuthData;
-		success = true;
-		_authStateChange(success)
+		if (persistedAuthData && persistedAuthData.refresh_token) {
+			log('authur: init completed successfully')
+			currentAuthData = persistedAuthData;
+			_authStateChange(true)
+		}
+		else {
+			log('authur: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
+			signout()
+		}
 	}
 	else {
-		log('authur: init completed but token is invalid. Signing out! data from storage was:', persistedAuthData)
+		log('authur: could not find any persisted data')
 		signout()
 	}
 
@@ -90,7 +84,7 @@ async function authenticate({ username, password }) {
 		};
 	}
 	else {
-		log("authur: failed login attempt")
+		log('authur: failed login attempt')
 		return {
 			ok: false,
 			error: resp.status === 401 ? 'Wrong username or password' : 'Something went wrong'
@@ -122,7 +116,7 @@ function signout() {
 }
 
 function _authStateChange(status) {
-	log("authur: auth state changed to: " + status)
+	log('authur: auth state changed to: ' + status)
 	_onAuthStateChangeCallbacks.forEach(c => {
 		c.callback(status)
 	})
@@ -189,7 +183,7 @@ async function _refreshToken() {
 			log('authur: token has been refreshed')
 		}
 		else if (resp.status === 401) {
-			log("authur: server returned 401 when trying to refresh token", currentAuthData, respData)
+			log('authur: server returned 401 when trying to refresh token', currentAuthData, respData)
 			signout()
 		}
 		else {

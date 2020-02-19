@@ -1,7 +1,7 @@
 {
 	"name": "authur",
-	"version": "0.2.17",
-	"description": "Supersimple oauth2 helper. Works well with umbraco-authu. Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by setting persistenceGet, persistenceSet and persistenceClear",
+	"version": "0.2.18",
+	"description": "Super simple oauth2 helper. Works well with umbraco-authu. Can be used in a browser (localstorage) or react-native (AsyncStorage) etc by setting persistenceGet, persistenceSet and persistenceClear",
 	"main": "authur.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
