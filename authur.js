@@ -6,8 +6,9 @@ let currentAuthData;
 let _onAuthStateChangeCallbacks = [];
 let _onAuthStateChangeCallbackIds = 0;
 let getTokenQueue = [];
+let _logFetch = false
 
-async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, debug = true }) {
+async function initialize({ origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, events, logFetch, debug = true }) {
 
 	if (!(persistenceGet && persistenceSet)) {
 		console.warn('authur:', 'persistenceGet or persistenceSet is not set - logins will not persist after page reloads')
@@ -21,6 +22,8 @@ async function initialize({ origin, authPath, apiPath, persistenceGet, persisten
 	persistenceClear = persistenceClear || noop;
 
 	isProcessing = true;
+
+	_logFetch = logFetch;
 
 	config = { origin, authPath, apiPath, persistenceGet, persistenceSet, persistenceClear, debug };
 
@@ -229,6 +232,16 @@ async function _fetch(path, options) {
 		options.headers.Authorization = `Bearer ${token}`;
 	}
 
+	try {
+		if (_logFetch) {
+			console.info(
+				`🌍 \x1b[38;5;247m${options.method} \x1b[38;5;81m` + path + '\x1b[0m',
+				`\x1b[90m${config.origin + config.apiPath}\x1b[0m`,
+				options.body && options.method ? '\n       body: ' + `\x1b[90m${formatJSON(options.body)}\x1b[0m` : '',
+			);
+		}
+	} catch(e) {}
+
 	const resp = await fetch(config.origin + config.apiPath + path, options)
 
 	if (resp.status === 401) {
@@ -245,3 +258,16 @@ function objectToFormData(obj) {
 }
 
 function noop() { }
+
+const formatJSON = (str) => {
+  try {
+    const parsed = JSON.parse(str);
+    const formatted = JSON.stringify(parsed, null, 2);
+    const indentation = ' '.repeat(7);
+    
+    const lines = formatted.split('\n');
+    return lines[0] + '\n' + lines.slice(1).map(line => `${indentation}${line}`).join('\n');
+  } catch (error) {
+    return str;
+  }
+};
